@@ -1,70 +1,951 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Age Calculator</title>
-    <meta name="description" content="Calculate your exact age in years, months, and days with our premium glassmorphic Age Calculator tool.">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Oi&display=swap" rel="stylesheet">
-    <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AGE CALCULATOR | Zahiya</title>
+  <meta name="description" content="A premium, modern Age Calculator. Enter your date of birth and instantly get your exact age in years, months, and days. Built for Digital Heroes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Raleway:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:  #9b5de5;
+      --violet:  #7c3aed;
+      --blue:    #3b82f6;
+      --cyan:    #06b6d4;
+      --pink:    #ec4899;
+      --magenta: #d946ef;
+      --bg:      #05030f;
+      --surface: rgba(255,255,255,0.04);
+      --border:  rgba(255,255,255,0.09);
+      --text:    #e2e8f0;
+      --muted:   #94a3b8;
+      --grad1: linear-gradient(135deg, var(--purple), var(--blue), var(--pink));
+      --grad2: linear-gradient(135deg, var(--violet), var(--magenta));
+      --glow-purple: 0 0 40px rgba(155,93,229,0.45);
+      --glow-pink:   0 0 40px rgba(236,72,153,0.45);
+      --glow-blue:   0 0 40px rgba(59,130,246,0.45);
+      --radius: 20px;
+      --radius-sm: 12px;
+      --transition: 0.35s cubic-bezier(.4,0,.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg);
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ─── PARTICLE CANVAS ─────────────────────────────── */
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ─── BACKGROUND BLOBS ────────────────────────────── */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+      animation: blobFloat 12s ease-in-out infinite alternate;
+    }
+    .bg-blob.b1 { width: 600px; height: 600px; background: var(--purple); top: -150px; left: -150px; animation-duration: 14s; }
+    .bg-blob.b2 { width: 500px; height: 500px; background: var(--blue);   bottom: -100px; right: -100px; animation-duration: 10s; animation-delay: -4s; }
+    .bg-blob.b3 { width: 350px; height: 350px; background: var(--pink);   top: 40%; left: 50%; transform: translate(-50%,-50%); animation-duration: 16s; animation-delay: -8s; }
+
+    @keyframes blobFloat {
+      from { transform: scale(1) translate(0,0); }
+      to   { transform: scale(1.12) translate(30px, 30px); }
+    }
+
+    /* ─── MAIN WRAPPER ────────────────────────────────── */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+      min-height: 100vh;
+    }
+
+    /* ─── HERO HEADING ────────────────────────────────── */
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(155,93,229,0.15);
+      border: 1px solid rgba(155,93,229,0.3);
+      border-radius: 99px;
+      padding: 6px 18px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: #c084fc;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: fadeInDown 0.8s ease both;
+    }
+    .hero-badge i { font-size: 0.75rem; }
+
+    .main-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(2.8rem, 8vw, 6.5rem);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-align: center;
+      line-height: 1.05;
+      background: linear-gradient(135deg, #c084fc 0%, #818cf8 30%, #38bdf8 55%, #f472b6 80%, #c084fc 100%);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(155,93,229,0.6)) drop-shadow(0 0 60px rgba(59,130,246,0.3));
+      animation: gradientShift 5s ease infinite, fadeInDown 0.9s ease 0.1s both;
+    }
+
+    @keyframes gradientShift {
+      0%,100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+
+    .subtitle {
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      color: var(--muted);
+      text-align: center;
+      max-width: 500px;
+      margin: 18px auto 0;
+      line-height: 1.7;
+      font-weight: 400;
+      animation: fadeInUp 1s ease 0.3s both;
+    }
+
+    /* ─── MAIN CARD ───────────────────────────────────── */
+    .main-card {
+      margin-top: 52px;
+      width: 100%;
+      max-width: 560px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 28px;
+      padding: 44px 44px 50px;
+      box-shadow: 0 0 0 1px rgba(155,93,229,0.1), 0 30px 80px rgba(0,0,0,0.5), var(--glow-purple);
+      animation: fadeInUp 1s ease 0.4s both;
+      position: relative;
+      overflow: hidden;
+    }
+    .main-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(155,93,229,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .main-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--purple), var(--blue), var(--pink), transparent);
+      border-radius: 28px 28px 0 0;
+    }
+
+    /* ─── FORM ────────────────────────────────────────── */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #a78bfa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-label i { font-size: 0.85rem; }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      color-scheme: dark;
+    }
+    input[type="date"]:hover {
+      border-color: rgba(155,93,229,0.5);
+      background: rgba(155,93,229,0.06);
+    }
+    input[type="date"]:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(155,93,229,0.2), var(--glow-purple);
+      background: rgba(155,93,229,0.08);
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.7) hue-rotate(250deg);
+      cursor: pointer;
+      scale: 1.2;
+    }
+
+    /* ─── CALCULATE BUTTON ────────────────────────────── */
+    .btn-calculate {
+      margin-top: 28px;
+      width: 100%;
+      padding: 18px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #7c3aed, #3b82f6, #ec4899);
+      background-size: 200% 200%;
+      background-position: 0% 50%;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: background-position 0.5s ease, transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 4px 30px rgba(124,58,237,0.4), 0 0 0 0 rgba(124,58,237,0);
+    }
+    .btn-calculate::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .btn-calculate:hover {
+      background-position: 100% 50%;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 40px rgba(124,58,237,0.6), 0 0 60px rgba(59,130,246,0.3);
+    }
+    .btn-calculate:hover::before { opacity: 1; }
+    .btn-calculate:active { transform: translateY(-1px); }
+    .btn-calculate i { font-size: 1rem; }
+
+    /* ─── RESULT SECTION ──────────────────────────────── */
+    .result-section {
+      margin-top: 44px;
+      width: 100%;
+      max-width: 680px;
+      animation: fadeInUp 0.8s ease both;
+      display: none;
+    }
+    .result-section.visible { display: block; }
+
+    .result-title {
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #a78bfa;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .result-title::before,
+    .result-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(167,139,250,0.4), transparent);
+      max-width: 140px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .result-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 22px;
+      padding: 30px 20px 26px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+      cursor: default;
+    }
+    .result-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .result-card:hover { transform: translateY(-6px); }
+
+    .result-card.card-years {
+      box-shadow: 0 10px 40px rgba(124,58,237,0.15);
+      border-color: rgba(124,58,237,0.2);
+    }
+    .result-card.card-years:hover  { box-shadow: 0 20px 60px rgba(124,58,237,0.35), 0 0 40px rgba(124,58,237,0.2); }
+    .result-card.card-years::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--violet), var(--purple));
+    }
+
+    .result-card.card-months {
+      box-shadow: 0 10px 40px rgba(59,130,246,0.15);
+      border-color: rgba(59,130,246,0.2);
+    }
+    .result-card.card-months:hover { box-shadow: 0 20px 60px rgba(59,130,246,0.35), 0 0 40px rgba(59,130,246,0.2); }
+    .result-card.card-months::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+    }
+
+    .result-card.card-days {
+      box-shadow: 0 10px 40px rgba(236,72,153,0.15);
+      border-color: rgba(236,72,153,0.2);
+    }
+    .result-card.card-days:hover { box-shadow: 0 20px 60px rgba(236,72,153,0.35), 0 0 40px rgba(236,72,153,0.2); }
+    .result-card.card-days::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--pink), var(--magenta));
+    }
+
+    .result-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.3rem;
+    }
+    .card-years  .result-icon { background: rgba(124,58,237,0.2);  color: #c084fc; }
+    .card-months .result-icon { background: rgba(59,130,246,0.2);  color: #60a5fa; }
+    .card-days   .result-icon { background: rgba(236,72,153,0.2);  color: #f472b6; }
+
+    .result-number {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .card-years  .result-number { color: #c084fc; text-shadow: 0 0 20px rgba(192,132,252,0.5); }
+    .card-months .result-number { color: #60a5fa; text-shadow: 0 0 20px rgba(96,165,250,0.5); }
+    .card-days   .result-number { color: #f472b6; text-shadow: 0 0 20px rgba(244,114,182,0.5); }
+
+    .result-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ─── NEXT BIRTHDAY ───────────────────────────────── */
+    .next-bday-card {
+      margin-top: 18px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 18px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .next-bday-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(217,70,239,0.15);
+      color: #e879f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .next-bday-text p { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+    .next-bday-text span { font-size: 1.0rem; font-weight: 700; color: #e879f9; }
+
+    /* ─── MINI PROFILE BOX ────────────────────────────── */
+    .mini-profile {
+      margin-top: 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 22px 14px 14px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 99px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(155,93,229,0.12);
+      position: relative;
+      overflow: hidden;
+      animation: floatBox 4s ease-in-out infinite alternate, fadeInUp 1s ease 0.65s both;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .mini-profile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(155,93,229,0.07), rgba(59,130,246,0.05), rgba(236,72,153,0.07));
+      pointer-events: none;
+    }
+    .mini-profile:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 30px rgba(155,93,229,0.25);
+    }
+    @keyframes floatBox {
+      from { transform: translateY(0px); }
+      to   { transform: translateY(-6px); }
+    }
+    .mini-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #fff;
+      font-family: 'Raleway', sans-serif;
+      box-shadow: 0 0 0 2px rgba(155,93,229,0.4), 0 0 14px rgba(155,93,229,0.35);
+      flex-shrink: 0;
+      animation: pulse-ring 3s ease-in-out infinite;
+    }
+    .mini-info { display: flex; flex-direction: column; gap: 2px; }
+    .mini-name  { font-size: 0.97rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .mini-email { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+    .mini-divider {
+      width: 1px;
+      height: 28px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px;
+      flex-shrink: 0;
+    }
+    .mini-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #a78bfa;
+    }
+    .mini-badge i { font-size: 0.68rem; }
+
+    /* ─── DIGITAL HEROES BUTTON ───────────────────────── */
+    .dh-section {
+      margin-top: 52px;
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      animation: fadeInUp 1s ease 0.6s both;
+    }
+    .dh-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .btn-dh {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 44px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #6d28d9, #2563eb, #db2777);
+      background-size: 250% 250%;
+      background-position: 0% 50%;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: background-position 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow:
+        0 4px 30px rgba(109,40,217,0.5),
+        0 0 60px rgba(37,99,235,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+    .btn-dh::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.7s ease;
+    }
+    .btn-dh::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      pointer-events: none;
+    }
+    .btn-dh:hover {
+      background-position: 100% 50%;
+      transform: translateY(-5px) scale(1.02);
+      box-shadow:
+        0 12px 60px rgba(109,40,217,0.7),
+        0 0 100px rgba(37,99,235,0.4),
+        0 0 40px rgba(219,39,119,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    .btn-dh:hover::before { left: 130%; }
+    .btn-dh:active { transform: translateY(-2px) scale(1.01); }
+
+    .btn-dh .dh-icon {
+      width: 42px;
+      height: 42px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .btn-dh:hover .dh-icon {
+      background: rgba(255,255,255,0.25);
+      transform: rotate(10deg) scale(1.1);
+    }
+
+    .btn-dh .dh-arrow {
+      margin-left: 4px;
+      transition: transform var(--transition);
+      font-size: 1rem;
+    }
+    .btn-dh:hover .dh-arrow { transform: translateX(5px); }
+
+    /* ─── FOOTER ──────────────────────────────────────── */
+    footer {
+      margin-top: 80px;
+      text-align: center;
+      color: rgba(148,163,184,0.5);
+      font-size: 0.82rem;
+      padding-bottom: 30px;
+      animation: fadeInUp 1s ease 0.7s both;
+    }
+    footer span { color: #a78bfa; }
+
+    /* ─── ERROR ───────────────────────────────────────── */
+    .error-msg {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 16px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 10px;
+      color: #fca5a5;
+      font-size: 0.88rem;
+      font-weight: 500;
+      align-items: center;
+      gap: 8px;
+    }
+    .error-msg.visible { display: flex; }
+
+    /* ─── ANIMATIONS ──────────────────────────────────── */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: scale(0.5); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes pulse-ring {
+      0%   { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(155,93,229,0.5); }
+      70%  { transform: scale(1);   box-shadow: 0 0 0 14px rgba(155,93,229,0); }
+      100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(155,93,229,0); }
+    }
+    .animate-count {
+      animation: countUp 0.6s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    /* ─── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 600px) {
+      .main-card { padding: 28px 24px 32px; }
+      .result-grid { grid-template-columns: 1fr; max-width: 300px; margin: 0 auto; }
+      .btn-dh { padding: 18px 28px; font-size: 1rem; }
+      .profile-card { padding: 24px 20px; }
+    }
+    @media (max-width: 400px) {
+      .btn-dh { padding: 16px 20px; font-size: 0.93rem; }
+    }
+
+    /* ─── SCROLLBAR ───────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(155,93,229,0.4); border-radius: 99px; }
+  </style>
 </head>
 <body>
-    <div class="background-decorations" id="doodles-container">
-        <!-- White flowery doodles will be dynamically generated by JS -->
+
+  <!-- Background blobs -->
+  <div class="bg-blob b1"></div>
+  <div class="bg-blob b2"></div>
+  <div class="bg-blob b3"></div>
+
+  <!-- Particle canvas -->
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="wrapper">
+
+    <!-- ── HERO ─────────────────────────────────────── -->
+    <div class="hero-badge">
+      <i class="fa-solid fa-bolt-lightning"></i>
+      Premium Age Calculator
     </div>
 
-    <main class="app-container">
-        <header class="app-header">
-            <h1>Age Calculator</h1>
-            <p class="tagline">Discover your precise lifetime timeline down to the day</p>
-        </header>
+    <h1 class="main-title">AGE CALCULATOR</h1>
 
-        <section class="calculator-card">
-            <div class="input-group">
-                <label for="dob">Select Date of Birth</label>
-                <div class="date-input-wrapper">
-                    <input type="date" id="dob" required>
-                    <span class="custom-calendar-icon"></span>
-                </div>
-            </div>
+    <p class="subtitle">
+      Discover your exact age down to the day. Enter your date of birth and let the magic unfold.
+    </p>
 
-            <button id="calculate-btn" class="btn btn-primary">Calculate Age</button>
+    <!-- ── CALCULATOR CARD ───────────────────────────── -->
+    <div class="main-card">
+      <div class="form-group">
+        <label class="form-label" for="dob-input">
+          <i class="fa-solid fa-calendar-days"></i>
+          Date of Birth
+        </label>
+        <div class="input-wrap">
+          <input
+            type="date"
+            id="dob-input"
+            max=""
+            aria-label="Enter your date of birth"
+          />
+        </div>
+        <div class="error-msg" id="error-msg">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="error-text">Please select a valid date of birth.</span>
+        </div>
+      </div>
 
-            <div class="results-container" id="results">
-                <div class="result-box">
-                    <span class="result-number" id="years">-</span>
-                    <span class="result-label">Years</span>
-                </div>
-                <div class="result-box">
-                    <span class="result-number" id="months">-</span>
-                    <span class="result-label">Months</span>
-                </div>
-                <div class="result-box">
-                    <span class="result-number" id="days">-</span>
-                    <span class="result-label">Days</span>
-                </div>
-            </div>
-            
-            <div class="error-message" id="error-container">
-                <span class="error-icon">⚠️</span>
-                <span id="error-text">Please enter a valid past date.</span>
-            </div>
-        </section>
+      <button class="btn-calculate" id="btn-calc" aria-label="Calculate Age">
+        <i class="fa-solid fa-calculator"></i>
+        Calculate Age
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
 
-        <footer class="app-footer">
-            <div class="creator-info">
-                <p class="creator-name">zahiya</p>
-                <a href="mailto:kittukhan864@gmail.com" class="creator-email">kittukhan864@gmail.com</a>
-            </div>
-            <a href="https://digitalheroesco.com" target="_blank" rel="noopener noreferrer" class="btn btn-hero" id="hero-btn">Built for Digital Heroes</a>
-        </footer>
-    </main>
+    <!-- ── RESULTS ───────────────────────────────────── -->
+    <section class="result-section" id="result-section" aria-live="polite" aria-label="Age calculation results">
+      <div class="result-title">
+        <span>Your Age</span>
+      </div>
 
-    <!-- Main JavaScript -->
-    <script src="script.js"></script>
+      <div class="result-grid">
+        <div class="result-card card-years">
+          <div class="result-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+          <div class="result-number" id="res-years">0</div>
+          <div class="result-label">Years</div>
+        </div>
+        <div class="result-card card-months">
+          <div class="result-icon"><i class="fa-solid fa-calendar-check"></i></div>
+          <div class="result-number" id="res-months">0</div>
+          <div class="result-label">Months</div>
+        </div>
+        <div class="result-card card-days">
+          <div class="result-icon"><i class="fa-solid fa-sun"></i></div>
+          <div class="result-number" id="res-days">0</div>
+          <div class="result-label">Days</div>
+        </div>
+      </div>
+
+      <div class="next-bday-card">
+        <div class="next-bday-icon"><i class="fa-solid fa-cake-candles"></i></div>
+        <div class="next-bday-text">
+          <p>Next Birthday</p>
+          <span id="next-bday-text">—</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── DIGITAL HEROES CTA ─────────────────────────── -->
+    <div class="dh-section">
+      <p class="dh-label">Powered by visionaries</p>
+      <a
+        href="https://digitalheroesco.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-dh"
+        id="btn-dh"
+        aria-label="Built for Digital Heroes - Visit digitalheroesco.com"
+      >
+        <span class="dh-icon"><i class="fa-solid fa-shield-halved"></i></span>
+        Built for Digital Heroes
+        <i class="fa-solid fa-arrow-right dh-arrow"></i>
+      </a>
+
+      <!-- ── MINI PERSONAL INFO BOX ────────────────────── -->
+      <div class="mini-profile" role="region" aria-label="Creator personal info">
+        <div class="mini-avatar">Z</div>
+        <div class="mini-info">
+          <span class="mini-name">Zahiya</span>
+          <span class="mini-email">kittukhan864@gmail.com</span>
+        </div>
+        <div class="mini-divider"></div>
+        <div class="mini-badge">
+          <i class="fa-solid fa-star"></i>
+          Creator
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ─────────────────────────────────────── -->
+    <footer>
+      <p>Crafted with <span>♥</span> by <span>Zahiya</span> &nbsp;·&nbsp; Age Calculator © 2026</p>
+    </footer>
+
+  </div>
+
+  <script>
+    /* ─────── DATE INIT ─────────────────────────────── */
+    const dobInput = document.getElementById('dob-input');
+    dobInput.max = new Date().toISOString().split('T')[0];
+
+    /* ─────── PARTICLE SYSTEM ────────────────────────── */
+    const canvas = document.getElementById('particle-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    const COLORS = ['rgba(155,93,229,', 'rgba(59,130,246,', 'rgba(236,72,153,', 'rgba(6,182,212,'];
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function randomParticle() {
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      return {
+        x:    Math.random() * W,
+        y:    Math.random() * H,
+        r:    Math.random() * 1.8 + 0.4,
+        dx:   (Math.random() - 0.5) * 0.35,
+        dy:   (Math.random() - 0.5) * 0.35,
+        alpha: Math.random() * 0.55 + 0.1,
+        color,
+      };
+    }
+
+    function initParticles(count = 90) {
+      particles = Array.from({ length: count }, randomParticle);
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, W, H);
+      for (const p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + p.alpha + ')';
+        ctx.fill();
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if (p.x < -10) p.x = W + 10;
+        if (p.x > W + 10) p.x = -10;
+        if (p.y < -10) p.y = H + 10;
+        if (p.y > H + 10) p.y = -10;
+      }
+      requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+    resize();
+    initParticles();
+    drawParticles();
+
+    /* ─────── UTILITY FUNCTIONS ──────────────────────── */
+    function showError(msg) {
+      const el   = document.getElementById('error-msg');
+      const text = document.getElementById('error-text');
+      text.textContent = msg;
+      el.classList.add('visible');
+    }
+    function hideError() {
+      document.getElementById('error-msg').classList.remove('visible');
+    }
+
+    function animateCounter(el, target, duration = 800) {
+      el.classList.remove('animate-count');
+      void el.offsetWidth; // reflow
+      el.classList.add('animate-count');
+
+      const start = performance.now();
+      function update(ts) {
+        const elapsed  = Math.min(ts - start, duration);
+        const progress = elapsed / duration;
+        const eased    = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(update);
+    }
+
+    function getNextBirthday(dob) {
+      const today = new Date();
+      let next = new Date(today.getFullYear(), dob.getMonth(), dob.getDate());
+      if (next <= today) next.setFullYear(today.getFullYear() + 1);
+      const diffMs   = next - today;
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      if (diffDays === 0) return '🎉 Today is your birthday!';
+      if (diffDays === 1) return 'Tomorrow!';
+      const m = next.toLocaleString('default', { month: 'long' });
+      const d = next.getDate();
+      return `${m} ${d} — in ${diffDays} days`;
+    }
+
+    /* ─────── AGE CALCULATION ────────────────────────── */
+    function calculateAge(dob) {
+      const today = new Date();
+      let years  = today.getFullYear() - dob.getFullYear();
+      let months = today.getMonth()    - dob.getMonth();
+      let days   = today.getDate()     - dob.getDate();
+
+      if (days < 0) {
+        months--;
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+      return { years, months, days };
+    }
+
+    /* ─────── BUTTON HANDLER ─────────────────────────── */
+    document.getElementById('btn-calc').addEventListener('click', () => {
+      hideError();
+      const val = dobInput.value;
+
+      if (!val) {
+        showError('Please select your date of birth first.');
+        dobInput.focus();
+        return;
+      }
+
+      const dob   = new Date(val + 'T00:00:00');
+      const today = new Date();
+
+      if (dob > today) {
+        showError('Date of birth cannot be in the future.');
+        return;
+      }
+
+      const { years, months, days } = calculateAge(dob);
+
+      /* Show result section */
+      const section = document.getElementById('result-section');
+      section.classList.add('visible');
+      section.style.animation = 'none';
+      void section.offsetWidth;
+      section.style.animation = '';
+
+      /* Animate counters */
+      animateCounter(document.getElementById('res-years'),  years,  900);
+      animateCounter(document.getElementById('res-months'), months, 700);
+      animateCounter(document.getElementById('res-days'),   days,   600);
+
+      /* Next birthday */
+      document.getElementById('next-bday-text').textContent = getNextBirthday(dob);
+
+      /* Scroll into view */
+      setTimeout(() => {
+        section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 150);
+    });
+
+    /* ─────── ENTER KEY ──────────────────────────────── */
+    dobInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('btn-calc').click();
+    });
+  </script>
 </body>
 </html>
